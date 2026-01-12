@@ -16,6 +16,12 @@ let users = [];
 io.on("connection", (socket) => {
   console.log("🔌 Connection:", socket.id);
 
+  // window switch
+  socket.on("window-switch", (data) => {
+    console.log("⚠️ SERVER: Window switch received:", data);
+    io.to("admin").emit("window-switch", data);
+  });
+
   // REGISTER USER
   socket.on("register-user", (userId) => {
     console.log("📝 Register:", userId);
@@ -37,8 +43,13 @@ io.on("connection", (socket) => {
   });
 
   // REGISTER ADMIN
+
   socket.on("register-admin", () => {
-    console.log("👨‍💼 Admin:", socket.id);
+    console.log("👨‍💼 Admin Registered:", socket.id);
+
+    // Make the admin socket join the "admin" room 👈 THIS IS MISSING
+    socket.join("admin");
+
     users = users.filter((u) => u.type !== "admin");
     users.push({
       userId: "admin",
@@ -66,6 +77,12 @@ io.on("connection", (socket) => {
   // FACE STATUS
   socket.on("face-status", (data) => {
     io.emit("face-status", data);
+  });
+
+  // for tab switching
+  socket.on("tab-switch", (data) => {
+    console.log("⚠️ SERVER: Tab switch received:", data);
+    io.to("admin").emit("tab-switch", data); // Admin ko forward karo
   });
 
   // OFFER
