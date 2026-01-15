@@ -85,6 +85,15 @@ io.on("connection", (socket) => {
     io.to("admin").emit("tab-switch", data); // Admin ko forward karo
   });
 
+  // Look for your socket listeners and add this block:
+  socket.on("screenshot-taken", (data) => {
+    console.log(
+      `📸 User ${data.userId} took a screenshot. Total: ${data.count}`
+    );
+    // This sends it to everyone (including the Admin)
+    io.emit("screenshot-taken", data);
+  });
+
   // OFFER
   socket.on("offer", ({ offer, from }) => {
     console.log("📨 Offer:", from);
